@@ -90,6 +90,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         for (String i in torem) {
           numbers.remove(int.parse(i));
         }
+        _AnimText = pairs[randompair];
       } else {
         if (_randomint != -1) {
           numbers.removeAt(_randomint);
@@ -101,9 +102,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           _randomint,
         );
         _AnimText = numbers[_randomint].toString();
-        _Animcontroller.reset();
-        _Animcontroller.forward();
       }
+      _Animcontroller.reset();
+      _Animcontroller.forward();
     });
   }
 
@@ -133,6 +134,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       setState(() {
                         _value = value;
                         print(_value);
+                        _Animcontroller.reset();
                         if (value) {
                           if (_randomint != -1) {
                             numbers.removeAt(_randomint);
