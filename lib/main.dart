@@ -30,13 +30,13 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  MyHomePage({Key? key, required this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -53,11 +53,26 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int _randomint = -1;
   bool _value = false;
   int randompair = -1;
+  String _AnimText = " ";
   StreamController<int> controller = StreamController<int>();
+  late AnimationController _Animcontroller = AnimationController(
+    duration: const Duration(seconds: 7),
+    vsync: this,
+  );
+  late Animation<double> _animation = CurvedAnimation(
+    parent: _Animcontroller,
+    curve: Interval(0.5, 1, curve: Curves.fastOutSlowIn),
+  );
+
+  @override
+  void dispose() {
+    super.dispose();
+    _Animcontroller.dispose();
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -85,6 +100,9 @@ class _MyHomePageState extends State<MyHomePage> {
         controller.add(
           _randomint,
         );
+        _AnimText = numbers[_randomint].toString();
+        _Animcontroller.reset();
+        _Animcontroller.forward();
       }
     });
   }
@@ -104,48 +122,63 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Switch(
-                value: _value,
-                onChanged: (bool value) {
-                  setState(() {
-                    _value = value;
-                    print(_value);
-                    if (value) {
-                      if (_randomint != -1) {
-                        numbers.removeAt(_randomint);
-                        _randomint = -1;
-                      }
-                      pairs = List.generate(
-                          numbers.length ~/ 3,
-                          (index) =>
-                              "${numbers[3 * index]} ${numbers[3 * index + 1]} ${numbers[3 * index + 2]}");
-                    }
-                  });
-                }),
-            Expanded(
-              child: FortuneWheel(
-                  selected: controller.stream,
-                  items: (_value)
-                      ? [
-                          for (var it in pairs)
-                            FortuneItem(
-                                child: Text(
-                              it,
-                              style: TextStyle(fontSize: 20),
-                            ))
-                        ]
-                      : [
-                          for (var it in numbers)
-                            FortuneItem(
-                                child: Text(
-                              it.toString(),
-                              style: TextStyle(fontSize: 20),
-                            ))
-                        ]),
+        child: Stack(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Switch(
+                    value: _value,
+                    onChanged: (bool value) {
+                      setState(() {
+                        _value = value;
+                        print(_value);
+                        if (value) {
+                          if (_randomint != -1) {
+                            numbers.removeAt(_randomint);
+                            _randomint = -1;
+                          }
+                          pairs = List.generate(
+                              numbers.length ~/ 3,
+                              (index) =>
+                                  "${numbers[3 * index]} ${numbers[3 * index + 1]} ${numbers[3 * index + 2]}");
+                        }
+                      });
+                    }),
+                Expanded(
+                  child: FortuneWheel(
+                      selected: controller.stream,
+                      items: (_value)
+                          ? [
+                              for (var it in pairs)
+                                FortuneItem(
+                                    child: Text(
+                                  it,
+                                  style: TextStyle(fontSize: 20),
+                                ))
+                            ]
+                          : [
+                              for (var it in numbers)
+                                FortuneItem(
+                                    child: Text(
+                                  it.toString(),
+                                  style: TextStyle(fontSize: 20),
+                                ))
+                            ]),
+                ),
+              ],
             ),
+            Center(
+              child: ScaleTransition(
+                  scale: _animation,
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      _AnimText,
+                      style: TextStyle(fontSize: 300),
+                    ),
+                  )),
+            )
           ],
         ),
       ),
