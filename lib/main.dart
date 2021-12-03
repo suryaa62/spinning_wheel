@@ -144,6 +144,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                               numbers.length ~/ 3,
                               (index) =>
                                   "${numbers[3 * index]} ${numbers[3 * index + 1]} ${numbers[3 * index + 2]}");
+                        } else {
+                          randompair = -1;
                         }
                       });
                     }),
