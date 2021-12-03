@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:confetti/confetti.dart';
 
 void main() {
   runApp(MyApp());
@@ -58,24 +60,42 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   bool _value = false;
   int randompair = -1;
   String _AnimText = " ";
+  bool _isConfetti = false;
   StreamController<int> controller = StreamController<int>();
   late AnimationController _Animcontroller = AnimationController(
     duration: const Duration(seconds: 7),
     vsync: this,
-  );
+  )..addListener(() {
+      // print(_Animcontroller.value);
+      if (_Animcontroller.value > 0.7 && !_isConfetti) playConfetti();
+    });
   late Animation<double> _animation = CurvedAnimation(
     parent: _Animcontroller,
     curve: Interval(0.5, 1, curve: Curves.fastOutSlowIn),
   );
+  late ConfettiController _confettiControllerRight;
+  late ConfettiController _confettiControllerLeft;
+
+  @override
+  void initState() {
+    super.initState();
+    _confettiControllerRight =
+        ConfettiController(duration: const Duration(seconds: 2));
+    _confettiControllerLeft =
+        ConfettiController(duration: const Duration(seconds: 2));
+  }
 
   @override
   void dispose() {
     super.dispose();
     _Animcontroller.dispose();
+    _confettiControllerLeft.dispose();
+    _confettiControllerRight.dispose();
   }
 
   void _incrementCounter() {
     setState(() {
+      _isConfetti = false;
       if (_value) {
         print(randompair);
         print(pairs);
@@ -106,6 +126,31 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       _Animcontroller.reset();
       _Animcontroller.forward();
     });
+  }
+
+  Widget myConfettiWidget(ConfettiController controller, double direction) {
+    return ConfettiWidget(
+      numberOfParticles: 5,
+      maxBlastForce: 450,
+      confettiController: controller,
+      blastDirection: direction,
+      shouldLoop: false,
+      emissionFrequency: 0.8,
+      blastDirectionality: BlastDirectionality.explosive,
+      colors: [
+        Colors.green,
+        Colors.blue,
+        Colors.pink,
+        Colors.orange,
+        Colors.purple
+      ],
+    );
+  }
+
+  void playConfetti() {
+    _isConfetti = true;
+    _confettiControllerRight.play();
+    _confettiControllerLeft.play();
   }
 
   @override
@@ -182,7 +227,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       style: TextStyle(fontSize: 300),
                     ),
                   )),
-            )
+            ),
+            Align(
+                alignment: Alignment.bottomRight,
+                child:
+                    myConfettiWidget(_confettiControllerRight, (5 * pi / 4))),
+            Align(
+                alignment: Alignment.bottomLeft,
+                child: myConfettiWidget(_confettiControllerRight, (-pi / 4)))
           ],
         ),
       ),
