@@ -9,7 +9,7 @@ void main() {
   runApp(MyApp());
 }
 
-List<int> numbers = List.generate(22, (index) => index + 1);
+List<int> numbers = List.generate(22, (index) => index + 1)..shuffle();
 List<String> pairs = [];
 
 class MyApp extends StatelessWidget {
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.amber,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -162,58 +162,61 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
+      // appBar: AppBar(
+      //   // Here we take the value from the MyHomePage object that was created by
+      //   // the App.build method, and use it to set our appbar title.
+      //   title: Text(widget.title),
+      // ),
       body: Center(
         child: Stack(
           children: [
+            Container(
+              width: double.infinity,
+              child: Opacity(
+                opacity: 0.8,
+                child: Image.asset(
+                  'lib/b2.png',
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Switch(
-                    value: _value,
-                    onChanged: (bool value) {
-                      setState(() {
-                        _value = value;
-                        print(_value);
-                        _Animcontroller.reset();
-                        if (value) {
-                          if (_randomint != -1) {
-                            numbers.removeAt(_randomint);
-                            _randomint = -1;
-                          }
-                          pairs = List.generate(
-                              numbers.length ~/ 3,
-                              (index) =>
-                                  "${numbers[3 * index]} ${numbers[3 * index + 1]} ${numbers[3 * index + 2]}");
-                        } else {
-                          randompair = -1;
-                        }
-                      });
-                    }),
                 Expanded(
-                  child: FortuneWheel(
-                      selected: controller.stream,
-                      items: (_value)
-                          ? [
-                              for (var it in pairs)
-                                FortuneItem(
-                                    child: Text(
-                                  it,
-                                  style: TextStyle(fontSize: 20),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Opacity(
+                      opacity: 0.98,
+                      child: FortuneWheel(
+                          indicators: [
+                            FortuneIndicator(
+                                alignment: Alignment.topCenter,
+                                child: TriangleIndicator(
+                                  color: Colors.black,
                                 ))
-                            ]
-                          : [
-                              for (var it in numbers)
-                                FortuneItem(
-                                    child: Text(
-                                  it.toString(),
-                                  style: TextStyle(fontSize: 20),
-                                ))
-                            ]),
+                          ],
+                          //styleStrategy: MyCustomFortuneWheel(),
+                          selected: controller.stream,
+                          items: (_value)
+                              ? [
+                                  for (var it in pairs)
+                                    FortuneItem(
+                                        child: Text(
+                                      it,
+                                      style: TextStyle(fontSize: 20),
+                                    ))
+                                ]
+                              : [
+                                  for (var it in numbers)
+                                    FortuneItem(
+                                        child: Text(
+                                      it.toString(),
+                                      style: TextStyle(fontSize: 20),
+                                    ))
+                                ]),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -238,11 +241,49 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Switch(
+              value: _value,
+              onChanged: (bool value) {
+                setState(() {
+                  _value = value;
+                  print(_value);
+                  _Animcontroller.reset();
+                  if (value) {
+                    if (_randomint != -1) {
+                      numbers.removeAt(_randomint);
+                      _randomint = -1;
+                    }
+                    pairs = List.generate(
+                        numbers.length ~/ 3,
+                        (index) =>
+                            "${numbers[3 * index]} ${numbers[3 * index + 1]} ${numbers[3 * index + 2]}");
+                  } else {
+                    randompair = -1;
+                  }
+                });
+              }),
+          FloatingActionButton(
+            onPressed: _incrementCounter,
+            tooltip: 'Increment',
+            child: const Icon(Icons.refresh),
+          ),
+        ],
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+class MyCustomFortuneWheel extends StyleStrategy {
+  @override
+  FortuneItemStyle getItemStyle(ThemeData theme, int index, int itemCount) {
+    // TODO: implement getItemStyle
+    if (index.isEven) {
+      return FortuneItemStyle(color: Colors.red);
+    } else {
+      return FortuneItemStyle(color: Colors.white);
+    }
   }
 }
