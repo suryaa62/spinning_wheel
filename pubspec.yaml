@@ -36,6 +36,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_fortune_wheel: ^1.1.1
   confetti: ^0.6.0
+  google_fonts: ^2.1.0
+  audioplayers: ^0.20.1
+ 
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +66,7 @@ flutter:
   assets:
     - lib/suryakant.png
     - lib/b2.png
+    - lib/wheelAudio.mp3
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

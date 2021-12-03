@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:confetti/confetti.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(MyApp());
@@ -21,17 +22,20 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.amber,
-      ),
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          primarySwatch: Colors.amber,
+          textTheme: TextTheme(
+            bodyText1: GoogleFonts.spicyRice(fontSize: 50),
+            bodyText2: GoogleFonts.spicyRice(fontSize: 300),
+          )),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -130,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   Widget myConfettiWidget(ConfettiController controller, double direction) {
     return ConfettiWidget(
-      numberOfParticles: 5,
+      numberOfParticles: 10,
       maxBlastForce: 450,
       confettiController: controller,
       blastDirection: direction,
@@ -196,23 +200,39 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                   color: Colors.black,
                                 ))
                           ],
+
                           //styleStrategy: MyCustomFortuneWheel(),
                           selected: controller.stream,
                           items: (_value)
                               ? [
                                   for (var it in pairs)
                                     FortuneItem(
-                                        child: Text(
-                                      it,
-                                      style: TextStyle(fontSize: 20),
-                                    ))
+                                      child: Text(
+                                        it,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1,
+                                      ),
+                                    )
                                 ]
                               : [
                                   for (var it in numbers)
                                     FortuneItem(
-                                        child: Text(
-                                      it.toString(),
-                                      style: TextStyle(fontSize: 20),
+                                        child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        SizedBox(width: 50),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 50),
+                                          child: Text(
+                                            it.toString(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1,
+                                          ),
+                                        ),
+                                      ],
                                     ))
                                 ]),
                     ),
@@ -227,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     padding: EdgeInsets.all(8.0),
                     child: Text(
                       _AnimText,
-                      style: TextStyle(fontSize: 300),
+                      style: Theme.of(context).textTheme.bodyText2,
                     ),
                   )),
             ),
