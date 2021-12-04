@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:confetti/confetti.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:just_audio/just_audio.dart';
 
 void main() {
   runApp(MyApp());
@@ -63,15 +64,23 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int _randomint = -1;
   bool _value = false;
   int randompair = -1;
+
   String _AnimText = " ";
   bool _isConfetti = false;
+
+  final player = AudioPlayer();
+
   StreamController<int> controller = StreamController<int>();
   late AnimationController _Animcontroller = AnimationController(
     duration: const Duration(seconds: 7),
     vsync: this,
   )..addListener(() {
       // print(_Animcontroller.value);
-      if (_Animcontroller.value > 0.7 && !_isConfetti) playConfetti();
+      if (_Animcontroller.value > 0.7 && !_isConfetti) {
+        playConfetti();
+        player.seekToNext();
+      }
+      //if (_Animcontroller.isCompleted) player.seekToNext();
     });
   late Animation<double> _animation = CurvedAnimation(
     parent: _Animcontroller,
@@ -87,6 +96,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         ConfettiController(duration: const Duration(seconds: 2));
     _confettiControllerLeft =
         ConfettiController(duration: const Duration(seconds: 2));
+    init();
+  }
+
+  void init() async {
+    var duration =
+        await player.setAudioSource(ConcatenatingAudioSource(children: [
+      AudioSource.uri(Uri.parse('asset:///lib/wheelAudio.mp3')),
+      AudioSource.uri(Uri.parse('asset:///lib/popAudio.mp3'))
+    ]));
   }
 
   @override
@@ -127,6 +145,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         );
         _AnimText = numbers[_randomint].toString();
       }
+
+      player.play();
+      player.seek(Duration(seconds: 0), index: 0);
       _Animcontroller.reset();
       _Animcontroller.forward();
     });

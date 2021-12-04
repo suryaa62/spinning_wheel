@@ -38,6 +38,7 @@ dependencies:
   confetti: ^0.6.0
   google_fonts: ^2.1.0
   audioplayers: ^0.20.1
+  just_audio: ^0.9.18
  
 
 dev_dependencies:
@@ -67,6 +68,7 @@ flutter:
     - lib/suryakant.png
     - lib/b2.png
     - lib/wheelAudio.mp3
+    - lib/popAudio.mp3
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
