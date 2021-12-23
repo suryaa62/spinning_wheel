@@ -201,7 +201,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 opacity: 0.8,
                 child: Image.asset(
                   'lib/b2.png',
-                  fit: BoxFit.fill,
+                  fit: BoxFit.cover,
+                  height: MediaQuery.of(context).size.height,
                 ),
               ),
             ),
